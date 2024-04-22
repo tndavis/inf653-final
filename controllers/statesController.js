@@ -96,7 +96,10 @@ const updateFunFact = async (req, res) => {
         return;
     }
     const stateFact = await State.findOne({"stateCode": req.params.state.toUpperCase()}).exec();
-    if (!stateFact || !(stateFact.funfacts[req.body.index - 1])) {
+    if (!stateFact) {
+        res.json({ 'message': 'No Fun Facts found for ' + stateName[0].state });
+        return;
+    } else if (!(stateFact.funfacts[req.body.index - 1])) {
         res.json({ 'message': 'No Fun Fact found at that index for ' + stateName[0].state });
         return;
     } else {
@@ -120,10 +123,14 @@ const deleteFunFact = async (req, res) => {
         return;
     }
     const stateFact = await State.findOne({"stateCode": req.params.state.toUpperCase()}).exec();
-    if (!stateFact || !(stateFact.funfacts[req.body.index - 1])) {
-        res.json({ 'message': 'No Fun Fact found at that index for ' + stateName[0].state });
+    if (!stateFact) {
+        res.json({ 'message': 'No Fun Facts found for ' + stateName[0].state });
         return;
     }
+    if (!(stateFact.funfacts[req.body.index - 1])) {
+          res.json({ 'message': 'No Fun Fact found at that index for ' + stateName[0].state });
+          return;
+      }
     stateFact.funfacts.splice(req.body.index - 1, 1);
     const result = await stateFact.save();
     res.json(result);
